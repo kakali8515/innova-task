@@ -1,9 +1,8 @@
 <template>
     <div>
         <form class="d-flex" @submit.prevent="getdata()">
-            <input class="form-control me-2" type="text"
-                placeholder="Filter by name/username/email/phone/Website/Company Name" v-model="searchQuery"
-                aria-label="Search">
+            <input class="form-control me-2" type="text" @input="getdata($event)"
+                placeholder="Filter by name/username/email/phone/Website/Company Name" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
         <br />
@@ -75,7 +74,8 @@ export default {
             this.page = value;
             this.$store.dispatch('UserList/setCurrentPage', value);
         },
-        getdata() {
+        getdata(e) {
+            this.searchQuery = e.target.value;
             this.$store.dispatch('UserList/searchUsers', this.searchQuery);
         }
     }

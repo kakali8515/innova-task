@@ -5,7 +5,8 @@
                 <div class="col-md-6">
 
                     <div v-if="block.type == 'checkbox'" class="form-check mt-4">
-                        <input class="form-check-input" :class="block.props.error ? 'is-invalid' : ''" type="checkbox"
+                        <input class="form-check-input" @click="getcheckData(block, $event)"
+                            :class="block.props.error ? 'is-invalid' : ''" type="checkbox"
                             v-model="formData[block.token]" :id="block.token">
                         <label class="form-check-label" :for="block.token">
                             {{ block.props.title }}
@@ -88,7 +89,7 @@ export default {
                     "type": "date",
                     "props": {
                         "title": "Enter Your DOB",
-                        "required": true,
+                        "required": "IS_PERSON_MINOR",
                         "placeholder": "e.g. 01/01/2000"
                     }
                 },
@@ -133,10 +134,21 @@ export default {
                 console.error("Form validation failed!");
             }
         },
+        getcheckData(block, event) {
+            if (event.target.checked) {
+                block.props.default = true;
+            } else {
+                block.props.default = false;
+                this.formData['PERSON_DOB'] = '';
+            }
+        },
         validateFormData() {
             let isValid = true;
             for (const block of this.blocks) {
-                if (block.props.required && !this.formData[block.token]) {
+                if (block.props.required && block.props.required !== 'IS_PERSON_MINOR' && !this.formData[block.token]) {
+                    block.props.error = "The field is required";
+                    isValid = false;
+                } else if (this.formData.IS_PERSON_MINOR && block.token == 'PERSON_DOB' && !this.formData['PERSON_DOB']) {
                     block.props.error = "The field is required";
                     isValid = false;
                 } else {
